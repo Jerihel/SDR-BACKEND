@@ -1,4 +1,4 @@
-package com.enactusumg.sdr.utils.security;
+package com.enactusumg.sdr.config.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

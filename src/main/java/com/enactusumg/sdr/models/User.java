@@ -1,6 +1,11 @@
 package com.enactusumg.sdr.models;
 
-import javax.persistence.*;
+import com.enactusumg.sdr.dto.CreateUserDto;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "users", schema = "enactus_sreg")
@@ -9,10 +14,23 @@ public class User {
     private String name;
     private String lastName;
     private String email;
+    private String password;
     private Integer state;
 
+    public User() {
+    }
+
+    public User(String name, String lastName, Integer state) {
+        this.name = name;
+        this.lastName = lastName;
+        this.state = state;
+    }
+
+    public static User fromDto(CreateUserDto dto) {
+        return new User(dto.getName(), dto.getLastName(), dto.getState());
+    }
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_user", length = 20)
     public String getIdUser() {
         return idUser;
@@ -47,6 +65,15 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    @Column(name = "password")
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Column(name = "state")

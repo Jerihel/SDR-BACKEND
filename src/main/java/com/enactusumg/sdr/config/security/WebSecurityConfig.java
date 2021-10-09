@@ -1,4 +1,4 @@
-package com.enactusumg.sdr.utils.security;
+package com.enactusumg.sdr.config.security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -18,6 +18,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable().authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/external/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/external/**").permitAll()
+                .antMatchers(HttpMethod.PATCH, "/external/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new CorsFilter(), ChannelProcessingFilter.class)
@@ -35,7 +36,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/swagger-ui.html",
                 "/webjars/**",
                 "/v3/api-docs/**",
-                "/swagger-ui/**"
+                "/swagger-ui/**",
+                "/index.html",
+                "/favicon.ico",
+                "/main.be1abdbec295dcb14df2.js",
+                "/polyfills.29c7b32d441016b25970.js",
+                "/styles.f17e3f7d486136f03217.css",
+                "/runtime.0e49e2b53282f40c8925.js",
+                "/assets/**",
+                "/"
         );
     }
 }

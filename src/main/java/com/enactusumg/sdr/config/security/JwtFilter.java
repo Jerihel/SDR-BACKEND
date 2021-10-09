@@ -1,4 +1,4 @@
-package com.enactusumg.sdr.utils.security;
+package com.enactusumg.sdr.config.security;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

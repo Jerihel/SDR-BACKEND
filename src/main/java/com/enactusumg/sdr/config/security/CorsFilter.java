@@ -1,5 +1,5 @@
 
-package com.enactusumg.sdr.utils.security;
+package com.enactusumg.sdr.config.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
