@@ -34,7 +34,12 @@ jobs:
           AWS_USER_EMAIL: ${{secrets.AWS_USER_EMAIL}}
           SENDGRID_API_KEY: ${{secrets.SENDGRID_API_KEY}}
         run: mvn clean package
-      - name: Copy target
-        run: |
-          mkdir enactus
-          cp target/*.jar enactus
+      - name: Upload jar via SSH
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USERNAME }}
+          port: ${{ secrets.AWS_PORT }}
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          source: "target/*.jar"
+          target: "backend"
