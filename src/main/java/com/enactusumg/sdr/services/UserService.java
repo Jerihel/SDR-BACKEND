@@ -140,7 +140,7 @@ public class UserService {
                 MediaType.APPLICATION_FORM_URLENCODED,
                 HttpMethod.POST
         );
-
+        user.setPassword(BCrypt.hashpw(dto.getPassword(), BCrypt.gensalt()));
         return resp.equalsIgnoreCase("OK");
     }
 

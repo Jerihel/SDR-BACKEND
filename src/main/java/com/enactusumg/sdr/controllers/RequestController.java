@@ -18,31 +18,22 @@ public class RequestController {
     @Autowired
     RequestService requestSrv;
 
-
     @GetMapping(value = "/external/get/requestUserEnacters/{id}")
     @ApiOperation(value = "obtiene la informacion de una solicitud")
     public RequestEnacterQuery obtenerValoresRequest(@PathVariable @ApiParam(value = "no de la solicitud") Integer id) {
-
-
         return requestSrv.getRequestEnacterQuery(id);
     }
 
     @PatchMapping(value = "/external/requestUserEnacters/update")
     @ApiOperation(value = "actualiza una solicitud de usuario enacters")
     public Request updateRequestUser(@RequestBody Request dto){
-
-
         return requestSrv.updateRequest(dto);
     }
-
-
 
     @PostMapping(value = "/external/save/requestUserEnacters")
     @ApiOperation(value = "crea una nueva solicitud y guarda la informacion segun el tipo de solicitud")
     public Request saveRequest(@RequestBody RequestEnacterDto dto) {
-
         return requestSrv.saveRequest(dto);
-
     }
     
     @GetMapping(value = "external/get/requestUserEnacters/status")
@@ -56,6 +47,4 @@ public class RequestController {
     public List<Request> getRequestStatus() {
         return requestSrv.getAllRequestStatus();
     }
-
-
 }
