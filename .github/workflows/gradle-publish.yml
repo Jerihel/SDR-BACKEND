@@ -17,13 +17,15 @@ jobs:
       packages: write
 
     steps:
-    - uses: actions/checkout@v2
-    - name: JAVA 8 And MAVEN Action
-      uses: kobi-lemberg/github-maven-step@java8_maven3.6
-      with:
-        # Command to run
-        command: mvn clean package
-    - name: Copy target
-      run: |
-        mkdir enactus
-        cp target/*.jar enactus
+      - uses: actions/checkout@v2
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: 8
+          distribution: adopt
+      - name: Build with Maven
+        run: mvn clean package
+      - name: Copy target
+        run: |
+          mkdir enactus
+          cp target/*.jar enactus
