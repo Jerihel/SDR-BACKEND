@@ -28,6 +28,11 @@ jobs:
           AWS_PG_URL: ${{secrets.AWS_PG_URL}}
           AWS_PG_USERNAME: ${{secrets.AWS_PG_USERNAME}}
           AWS_PG_PASSWORD: ${{secrets.AWS_PG_PASSWORD}}
+          AWS_NO_REPLY_EMAIL: ${{secrets.AWS_NO_REPLY_EMAIL}}
+          AWS_EMAIL_URL: ${{secrets.AWS_EMAIL_URL}}
+          AWS_PASSWORD_EMAIL: ${{secrets.AWS_PASSWORD_EMAIL}}
+          AWS_USER_EMAIL: ${{secrets.AWS_USER_EMAIL}}
+          SENDGRID_API_KEY: ${{secrets.SENDGRID_API_KEY}}
         run: mvn clean package
       - name: Copy target
         run: |
