@@ -1,0 +1,29 @@
+# This workflow will build a package using Gradle and then publish it to GitHub packages when a release is created
+# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#Publishing-using-gradle
+
+name: Gradle Package
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: JAVA 8 And MAVEN Action
+      uses: kobi-lemberg/github-maven-step@java8_maven3.6
+      with:
+        # Command to run
+        command: mvn clean package
+    - name: Copy target
+      run: |
+        mkdir enactus
+        cp target/*.jar enactus
