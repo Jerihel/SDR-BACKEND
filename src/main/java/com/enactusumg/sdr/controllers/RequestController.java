@@ -7,6 +7,7 @@ import com.enactusumg.sdr.services.RequestService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,6 +43,18 @@ public class RequestController {
 
         return requestSrv.saveRequest(dto);
 
+    }
+    
+    @GetMapping(value = "external/get/requestUserEnacters/status")
+    @ApiOperation(value = "Retorna todas las solicitudes con estado diferente a finalizado.")
+    public List<Request> getRequest() {
+        return requestSrv.getAllRequest();
+    }
+    
+    @GetMapping(value = "external/get/requestUserEnacters/statusAnalysis")
+    @ApiOperation(value = "Retorna todas las solicitudes con estado -Analisis de la Solicitud-.")
+    public List<Request> getRequestStatus() {
+        return requestSrv.getAllRequestStatus();
     }
 
 
