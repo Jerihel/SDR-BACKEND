@@ -43,3 +43,13 @@ jobs:
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           source: "target/*.jar"
           target: "backend"
+      - name: Deploy server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USERNAME }}
+          port: ${{ secrets.AWS_PORT }}
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          script: |
+            cd backend
+            sh deploy.sh
