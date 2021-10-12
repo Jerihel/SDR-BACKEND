@@ -7,6 +7,8 @@ import com.enactusumg.sdr.dto.RequestEnacterQuery;
 import com.enactusumg.sdr.models.Request;
 import com.enactusumg.sdr.models.UserRequest;
 import com.enactusumg.sdr.repositories.RequestRepository;
+import static java.lang.Math.log;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,5 +89,18 @@ return requestEnacterDto;
         }
         logger.info("actualizando solicitud");
         return requestRpstry.save(dto);
+    }
+    
+    
+    @Transactional(readOnly = true)
+    public List<Request> getAllRequest() {
+        logger.debug("Consultado todas las solicitudes con estado distinto a finalizado");
+        return requestRpstry.findAllRequest();
+    }
+    
+    @Transactional(readOnly = true)
+    public List<Request> getAllRequestStatus() {
+        logger.debug("Consultado todas las solicitudes con estado Analisis de la Solicitud");
+        return requestRpstry.findAllRequestStatus();
     }
 }
