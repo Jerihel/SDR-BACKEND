@@ -24,6 +24,10 @@ jobs:
           java-version: 8
           distribution: adopt
       - name: Build with Maven
+        env:
+          AWS_PG_URL: ${{secrets.AWS_PG_URL}}
+          AWS_PG_USERNAME: ${{secrets.AWS_PG_USERNAME}}
+          AWS_PG_PASSWORD: ${{secrets.AWS_PG_PASSWORD}}
         run: mvn clean package
       - name: Copy target
         run: |
