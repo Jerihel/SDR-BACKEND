@@ -1,6 +1,7 @@
 package com.enactusumg.sdr.services;
 
 import com.enactusumg.sdr.dto.CreateUserDto;
+import com.enactusumg.sdr.dto.EmailBodyDto;
 import com.enactusumg.sdr.dto.UserCreatedDto;
 import com.enactusumg.sdr.dto.UserDto;
 import com.enactusumg.sdr.models.User;
@@ -20,11 +21,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -39,6 +38,9 @@ public class UserService {
 
     @Autowired
     public WebConsumerService webConsumerService;
+
+    @Autowired
+    public EmailService emailService;
 
     /**
      * Este metodo es de solo lectura (no se adhiere a una transacción existente) encargado de consultar todos los usuarios
@@ -115,7 +117,6 @@ public class UserService {
         return userRoleRepository.findByIdUser(userId);
     }
 
-
     /**
      * Este metodo es de solo lectura (no se adhiere a una transacción existente) se encarga de consultar todos los roles
      * de un usuario registrados en base de datos.
@@ -124,10 +125,18 @@ public class UserService {
      * @author Carlos Ramos (cramosl3@miumg.edu.gt)
      */
     @Transactional
-    public boolean changePassword(UserDto dto) {
+    public boolean changePassword(UserDto dto, String token) {
+        final String msg = "El token está vencido o es incorrecto";
+        final EmailBodyDto bodyDto = new EmailBodyDto();
         final User user = userRepository.findById(dto.getUsername()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.")
         );
+
+        if(token != null){
+            if (!BCrypt.checkpw(token, user.getPassword())) {
+                throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, msg);
+            }
+        }
 
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("email", user.getEmail());
@@ -141,7 +150,57 @@ public class UserService {
                 HttpMethod.POST
         );
         user.setPassword(BCrypt.hashpw(dto.getPassword(), BCrypt.gensalt()));
+
+        bodyDto.setEmail(user.getEmail());
+        bodyDto.setTemplateId("d-ab4965009ad64c53a5051e7d128d6aee");
+
+        Map<String, String> params = new HashMap<>();
+        params.put("name", user.getName() + " " + user.getLastName());
+
+        try {
+            emailService.sendEmail(bodyDto, params);
+        } catch (IOException e) {
+        }
         return resp.equalsIgnoreCase("OK");
+    }
+
+    /**
+     * Este metodo es de solo lectura (no se adhiere a una transacción existente) se encarga de consultar todos los roles
+     * de un usuario registrados en base de datos.
+     *
+     * @return Lista de {@link UserRole} registrados en la base de datos.
+     * @author Carlos Ramos (cramosl3@miumg.edu.gt)
+     */
+    @Transactional
+    public boolean requestChangePassword(String username) {
+        final StringBuilder token = new StringBuilder();
+        final EmailBodyDto bodyDto = new EmailBodyDto();
+        final User user = userRepository.findById(username).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.")
+        );
+
+        String[] letters = new String[]{"a", "b", "c", "d", "e", "f", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+        for (int i = 0; i < 6; i++) {
+            int pos = (int) Math.floor((Math.random() * 15));
+            token.append(letters[pos]);
+        }
+
+        bodyDto.setEmail(user.getEmail());
+        bodyDto.setSubject("Reestablecer Contraseña");
+        bodyDto.setTemplateId("d-8b9bf15da6bd463991af65619c1b298b");
+
+        Map<String, String> params = new HashMap<>();
+        params.put("name", user.getName() + " " + user.getLastName());
+        params.put("token", token.toString());
+
+        try {
+            emailService.sendEmail(bodyDto, params);
+            user.setPassword(BCrypt.hashpw(token.toString(), BCrypt.gensalt()));
+        } catch (IOException e) {
+            return false;
+        }
+
+        return true;
     }
 
     private String generateEmail(CreateUserDto dto) {

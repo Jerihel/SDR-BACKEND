@@ -11,4 +11,5 @@ public class EmailBodyDto {
     private String email;
     private String content;
     private String subject;
+    private String templateId;
 }

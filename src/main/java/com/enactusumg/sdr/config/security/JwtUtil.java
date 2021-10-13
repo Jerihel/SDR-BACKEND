@@ -15,10 +15,14 @@ import java.util.Date;
 public class JwtUtil {
 
     public static String generateToken(String username) {
+        return generateToken(username, (1000 * 60 * 60 * 2));
+    }
+
+    public static String generateToken(String username, long expiration) {
 
         String token = Jwts.builder()
                 .setSubject(username)
-                .setExpiration(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 2)))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(SignatureAlgorithm.HS512, "3N4cTu5P45s")
                 .compact();
         return "Bearer " + token;

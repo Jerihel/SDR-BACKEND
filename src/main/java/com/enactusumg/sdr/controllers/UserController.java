@@ -70,14 +70,18 @@ public class UserController {
     @PatchMapping(value = "external/users/recover/password/{token}")
     @ApiOperation(value = "Recupera la contraseña de un usuario en base de datos.")
     public boolean recoverPassword(@PathVariable String token, @RequestBody UserDto dto) {
-        // Validate token
-        //  Change password
-        return userService.changePassword(dto);
+        return userService.changePassword(dto, token);
+    }
+
+    @PatchMapping(value = "external/users/request/recover/password/{username}")
+    @ApiOperation(value = "Recupera la contraseña de un usuario en base de datos.")
+    public boolean requestRecoverPassword(@PathVariable String username) {
+        return userService.requestChangePassword(username);
     }
 
     @PatchMapping(value = "internal/users/change/password")
     @ApiOperation(value = "Actualiza la contraseña de un usuario en base de datos.")
     public boolean updatePassword(@RequestBody UserDto dto) {
-        return userService.changePassword(dto);
+        return userService.changePassword(dto, null);
     }
 }
