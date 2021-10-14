@@ -3,6 +3,7 @@ package com.enactusumg.sdr.services;
 import com.enactusumg.sdr.dto.CriterionDto;
 import com.enactusumg.sdr.dto.CriterionUpdatDto;
 import com.enactusumg.sdr.models.CriterionEvaluation;
+import com.enactusumg.sdr.projections.CriterionEvalutionProjection;
 import com.enactusumg.sdr.repositories.CriterioRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -53,5 +55,18 @@ public CriterionEvaluation upDateCriterio(CriterionUpdatDto dto){
 
 logger.info("datos criterio "+ criterio.toString());
 return criterio;
+}
+
+public List<CriterionEvalutionProjection> getAllCriterion(){
+        logger.info("obteniendo todos los criterios");
+
+        List<CriterionEvalutionProjection> criterios= criterioRps.obtenerCriterionEvaluation();
+
+        if(criterios.isEmpty()){
+
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"No existen datos");
+        }
+
+        return criterios;
 }
 }
