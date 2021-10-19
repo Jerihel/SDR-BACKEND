@@ -6,6 +6,7 @@ import com.enactusumg.sdr.dto.UserCreatedDto;
 import com.enactusumg.sdr.dto.UserDto;
 import com.enactusumg.sdr.models.User;
 import com.enactusumg.sdr.models.UserRole;
+import com.enactusumg.sdr.projections.StateReviewerProjection;
 import com.enactusumg.sdr.repositories.UserRepository;
 import com.enactusumg.sdr.repositories.UserRoleRepository;
 import com.enactusumg.sdr.repositories.WebConsumerService;
@@ -22,6 +23,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -223,5 +225,17 @@ public class UserService {
             dateStr = Arrays.stream(dateStr.split("")).reduce((s, s2) -> String.valueOf(Integer.parseInt(s) + Integer.parseInt(s2))).orElse("");
         }
         return Integer.parseInt(dateStr);
+    }
+    
+    @Transactional(readOnly = true)
+    public List<StateReviewerProjection> getStateReviewer(int id) {
+        List<StateReviewerProjection> state = userRepository.getState(id);
+        return state;
+    }
+        
+    @Transactional(readOnly = true)
+    public List<BigInteger> getCountRequest(String pUser) {
+	List<BigInteger> user = userRepository.getCountRequest(pUser);
+	return user;
     }
 }

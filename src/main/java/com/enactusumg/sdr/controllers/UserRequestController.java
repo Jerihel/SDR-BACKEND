@@ -21,4 +21,9 @@ public class UserRequestController {
     UserRequestService userService;
 
 
+    @PostMapping(value = "/external/save/userRequest")
+    @ApiOperation(value = "crea una nueva solicitud y guarda la informacion segun el tipo de solicitud")
+    public UserRequest saveRequest(@RequestBody UserRequestDto dto, int idRequest) {
+        return userService.saveUserRequest(dto, idRequest);
+    }
 }

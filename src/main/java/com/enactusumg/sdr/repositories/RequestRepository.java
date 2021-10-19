@@ -12,12 +12,12 @@ public interface RequestRepository extends CrudRepository<Request, Integer> {
     @Override
     List<Request> findAll();
     
-    @Query(value = "select * from enactus_sreg.request where status not in ('finalizado')",
+    @Query(value = "select * from enactus_sreg.request where state not in (9)",
             nativeQuery = true
     )
     List<Request> findAllRequest();
     
-    @Query(value = "select * from enactus_sreg.request where status = 'Análisis de la Solicitud'",
+    @Query(value = "select * from enactus_sreg.request where state = 5",
             nativeQuery = true
     )
     List<Request> findAllRequestStatus();
