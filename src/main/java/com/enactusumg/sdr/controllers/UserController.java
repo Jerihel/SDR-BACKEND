@@ -6,9 +6,11 @@ import com.enactusumg.sdr.dto.UserCreatedDto;
 import com.enactusumg.sdr.dto.UserDto;
 import com.enactusumg.sdr.dto.UserLoggedDto;
 import com.enactusumg.sdr.models.User;
+import com.enactusumg.sdr.projections.StateReviewerProjection;
 import com.enactusumg.sdr.services.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.math.BigInteger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -83,5 +85,17 @@ public class UserController {
     @ApiOperation(value = "Actualiza la contraseña de un usuario en base de datos.")
     public boolean updatePassword(@RequestBody UserDto dto) {
         return userService.changePassword(dto, null);
+    }
+    
+    @GetMapping(value = "external/stateReviewer/{id}")
+    @ApiOperation(value = "Retorna el estado del revisor.")
+    public List<StateReviewerProjection> getState(@PathVariable int id) {
+        return userService.getStateReviewer(id);
+    }
+    
+    @GetMapping(value = "external/countRequestReviewer/{user}")
+    @ApiOperation(value = "Retorna solicitudes por revisor en estado analisis de la solicitud.")
+    public List<BigInteger> getCountRequestReviewer(@PathVariable String user) {
+        return userService.getCountRequest(user);
     }
 }

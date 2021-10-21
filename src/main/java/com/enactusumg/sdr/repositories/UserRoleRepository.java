@@ -5,7 +5,6 @@ import com.enactusumg.sdr.models.UserRole;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserRoleRepository extends CrudRepository<UserRole, Integer> {
 
