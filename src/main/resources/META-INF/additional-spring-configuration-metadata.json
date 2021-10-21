@@ -1,0 +1,29 @@
+{
+  "properties": [
+    {
+      "name": "enactus.email.no-reply",
+      "type": "java.lang.String",
+      "description": "Description for enactus.email.no-reply."
+    },
+    {
+      "name": "enactus.email.send-grid",
+      "type": "java.lang.String",
+      "description": "Description for enactus.email.send-grid."
+    },
+    {
+      "name": "enactus.email.url",
+      "type": "java.lang.String",
+      "description": "Description for enactus.email.url."
+    },
+    {
+      "name": "enactus.email.user",
+      "type": "java.lang.String",
+      "description": "Description for enactus.email.user."
+    },
+    {
+      "name": "enactus.email.password",
+      "type": "java.lang.String",
+      "description": "Description for enactus.email.password."
+    }
+  ]
+}

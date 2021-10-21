@@ -7,49 +7,28 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name="user_request",schema = "enactus_sreg")
-public class UserRequest implements Serializable { private Integer idUserRequest;
-private Integer campus;
-private Integer facultad;
-private Integer career;
-private Integer enacterDegree;
-private Integer interest;
-private Integer lookUp;
-private String financialSupport;
-private Integer amount;
-private String supportDetail;
-private  String adviserDegree;
-private String currenctActivity;
-private String hasExperience;
-private  String experienceDetail;
-private Integer adviseOn;
-private Integer adviseWay;
+@Table(name = "user_request", schema = "enactus_sreg")
+public class UserRequest implements Serializable {
+    private Integer idUserRequest;
+    private Integer campus;
+    private Integer facultad;
+    private Integer career;
+    private Integer enacterDegree;
+    private Integer interest;
+    private Integer lookUp;
+    private String financialSupport;
+    private Integer amount;
+    private String supportDetail;
+    private String adviserDegree;
+    private String currenctActivity;
+    private String hasExperience;
+    private String experienceDetail;
+    private Integer adviseOn;
+    private Integer adviseWay;
 
     public UserRequest() {
     }
 
-public static UserRequest saveUserRequest(UserRequestDto dto,Integer idRequest){
-
-        UserRequest user= new UserRequest();user.setIdUserRequest(1);
-        user.setIdUserRequest(idRequest);
-    user.setCampus(dto.getCampus());
-    user.setFacultad(dto.getFacultad());
-    user.setCareer(dto.getCareer());
-    user.setEnacterDegree(dto.getEnacterDegree());
-    user.setInterest(dto.getInterest());
-    user.setLookUp(dto.getLookUp());
-    user.setFinancialSupport(dto.getFinancialSupport());
-    user.setAmount(dto.getAmount());
-    user.setSupportDetail(dto.getSupportDetail());
-    user.setAdviserDegree(dto.getAdviserDegree());
-    user.setCurrenctActivity(dto.getCurrenctActivity());
-    user.setHasExperience(dto.getHasExperience());
-    user.setExperienceDetail(dto.getExperienceDetail());
-    user.setAdviseOn(dto.getAdviseOn());
-    user.setAdviseWay(dto.getAdviseWay());
-
-        return user;
-}
     public UserRequest(Integer idUserRequest, Integer campus, Integer facultad, Integer career, Integer enacterDegree, Integer interest, Integer lookUp, String financialSupport, Integer amount, String supportDetail, String adviserDegree, String currenctActivity, String hasExperience, String experienceDetail, Integer adviseOn, Integer adviseWay) {
         this.idUserRequest = idUserRequest;
         this.campus = campus;
@@ -69,17 +48,41 @@ public static UserRequest saveUserRequest(UserRequestDto dto,Integer idRequest){
         this.adviseWay = adviseWay;
     }
 
-    @Id
-    @Column(name = "id_user_request",unique = true,nullable = false)
+    public static UserRequest saveUserRequest(UserRequestDto dto, Integer idRequest) {
+        UserRequest user = new UserRequest();
+        user.setIdUserRequest(1);
+        user.setIdUserRequest(idRequest);
+        user.setCampus(dto.getCampus());
+        user.setFacultad(dto.getFacultad());
+        user.setCareer(dto.getCareer());
+        user.setEnacterDegree(dto.getEnacterDegree());
+        user.setInterest(dto.getInterest());
+        user.setLookUp(dto.getLookUp());
+        user.setFinancialSupport(dto.getFinancialSupport());
+        user.setAmount(dto.getAmount());
+        user.setSupportDetail(dto.getSupportDetail());
+        user.setAdviserDegree(dto.getAdviserDegree());
+        user.setCurrenctActivity(dto.getCurrenctActivity());
+        user.setHasExperience(dto.getHasExperience());
+        user.setExperienceDetail(dto.getExperienceDetail());
+        user.setAdviseOn(dto.getAdviseOn());
+        user.setAdviseWay(dto.getAdviseWay());
 
-public Integer getIdUserRequest() {
+        return user;
+    }
+
+    @Id
+    @Column(name = "id_user_request", unique = true, nullable = false)
+
+    public Integer getIdUserRequest() {
         return idUserRequest;
     }
 
     public void setIdUserRequest(Integer idUserRequest) {
         this.idUserRequest = idUserRequest;
     }
- @Column(name="campus")
+
+    @Column(name = "campus")
     public Integer getCampus() {
         return campus;
     }
@@ -87,7 +90,8 @@ public Integer getIdUserRequest() {
     public void setCampus(Integer campus) {
         this.campus = campus;
     }
-@Column(name="facultad" )
+
+    @Column(name = "facultad")
     public Integer getFacultad() {
         return facultad;
     }
@@ -95,7 +99,8 @@ public Integer getIdUserRequest() {
     public void setFacultad(Integer facutlad) {
         this.facultad = facutlad;
     }
-@Column(name="career")
+
+    @Column(name = "career")
     public Integer getCareer() {
         return career;
     }
@@ -103,7 +108,8 @@ public Integer getIdUserRequest() {
     public void setCareer(Integer career) {
         this.career = career;
     }
-@Column(name="interest")
+
+    @Column(name = "interest")
     public Integer getInterest() {
         return interest;
     }
@@ -111,7 +117,8 @@ public Integer getIdUserRequest() {
     public void setInterest(Integer interest) {
         this.interest = interest;
     }
-@Column(name="look_up")
+
+    @Column(name = "look_up")
     public Integer getLookUp() {
         return lookUp;
     }
@@ -119,7 +126,8 @@ public Integer getIdUserRequest() {
     public void setLookUp(Integer lookUp) {
         this.lookUp = lookUp;
     }
-@Column(name="enacter_degree")
+
+    @Column(name = "enacter_degree")
     public Integer getEnacterDegree() {
         return enacterDegree;
     }
@@ -127,7 +135,8 @@ public Integer getIdUserRequest() {
     public void setEnacterDegree(Integer enacterDegree) {
         this.enacterDegree = enacterDegree;
     }
-@Column(name = "financial_support",length = 1)
+
+    @Column(name = "financial_support", length = 1)
     public String getFinancialSupport() {
         return financialSupport;
     }
@@ -135,7 +144,8 @@ public Integer getIdUserRequest() {
     public void setFinancialSupport(String financialSupport) {
         this.financialSupport = financialSupport;
     }
-@Column(name = "amout")
+
+    @Column(name = "amount")
     public Integer getAmount() {
         return amount;
     }
@@ -143,7 +153,8 @@ public Integer getIdUserRequest() {
     public void setAmount(Integer amount) {
         this.amount = amount;
     }
-@Column(name="support_detail",length =200 )
+
+    @Column(name = "support_detail", length = 200)
     public String getSupportDetail() {
         return supportDetail;
     }
@@ -151,7 +162,8 @@ public Integer getIdUserRequest() {
     public void setSupportDetail(String supportDetail) {
         this.supportDetail = supportDetail;
     }
-@Column(name="adviser_degree",length = 50)
+
+    @Column(name = "adviser_degree", length = 50)
     public String getAdviserDegree() {
         return adviserDegree;
     }
@@ -159,7 +171,8 @@ public Integer getIdUserRequest() {
     public void setAdviserDegree(String adviserDegree) {
         this.adviserDegree = adviserDegree;
     }
-@Column(name = "currect_activity",length = 100)
+
+    @Column(name = "currect_activity", length = 100)
     public String getCurrenctActivity() {
         return currenctActivity;
     }
@@ -167,7 +180,8 @@ public Integer getIdUserRequest() {
     public void setCurrenctActivity(String currenctActivity) {
         this.currenctActivity = currenctActivity;
     }
-@Column(name ="has_experience",length = 1)
+
+    @Column(name = "has_experience", length = 1)
     public String getHasExperience() {
         return hasExperience;
     }
@@ -175,7 +189,8 @@ public Integer getIdUserRequest() {
     public void setHasExperience(String hasExperience) {
         this.hasExperience = hasExperience;
     }
-@Column(name = "experience_detail",length = 100)
+
+    @Column(name = "experience_detail", length = 100)
     public String getExperienceDetail() {
         return experienceDetail;
     }
@@ -183,7 +198,8 @@ public Integer getIdUserRequest() {
     public void setExperienceDetail(String experienceDetail) {
         this.experienceDetail = experienceDetail;
     }
-@Column(name = "advise_on")
+
+    @Column(name = "advise_on")
     public Integer getAdviseOn() {
         return adviseOn;
     }
@@ -191,7 +207,8 @@ public Integer getIdUserRequest() {
     public void setAdviseOn(Integer adviseOn) {
         this.adviseOn = adviseOn;
     }
-@Column(name = "advise_way")
+
+    @Column(name = "advise_way")
     public Integer getAdviseWay() {
         return adviseWay;
     }
