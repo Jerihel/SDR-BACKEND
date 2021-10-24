@@ -10,9 +10,6 @@ import java.util.List;
 @Builder
 public class UserLoggedDto {
     private String username;
-    private String name;
-    private String lastName;
-    private String email;
     private List<UserRole> roles;
     private String token;
 }

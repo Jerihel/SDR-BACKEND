@@ -1,5 +1,6 @@
 package com.enactusumg.sdr.services;
 
+import com.enactusumg.sdr.config.security.JwtUtil;
 import com.enactusumg.sdr.dto.CreateUserDto;
 import com.enactusumg.sdr.dto.EmailBodyDto;
 import com.enactusumg.sdr.dto.UserCreatedDto;
@@ -11,9 +12,11 @@ import com.enactusumg.sdr.repositories.UserRoleRepository;
 import com.enactusumg.sdr.repositories.WebConsumerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.lang.Nullable;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,7 +53,11 @@ public class UserService {
      * @author Carlos Ramos (cramosl3@miumg.edu.gt)
      */
     @Transactional(readOnly = true)
-    public List<User> getAllUsers() {
+    public List<User> getAllUsers(HttpHeaders headers) {
+        final String username = JwtUtil.parseToken(headers.getFirst("Authorization"));
+        if (!userRoleRepository.existsByIdUserAndIdRole(username, 4)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No tiene los permisos para poder realizar esta acción.");
+        }
         return userRepository.findAll();
     }
 
@@ -62,7 +69,13 @@ public class UserService {
      * @author Carlos Ramos (cramosl3@miumg.edu.gt)
      */
     @Transactional(readOnly = true)
-    public User getUser(String userId) {
+    public User getUser(@Nullable HttpHeaders headers, String userId) {
+        if (headers != null) {
+            final String username = JwtUtil.parseToken(headers.getFirst("Authorization"));
+            if (!userId.equalsIgnoreCase(username)) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No tiene los permisos para poder realizar esta acción.");
+            }
+        }
         return userRepository.findById(userId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.")
         );
@@ -76,7 +89,11 @@ public class UserService {
      * @author Carlos Ramos (cramosl3@miumg.edu.gt)
      */
     @Transactional
-    public UserCreatedDto createUser(CreateUserDto dto) {
+    public UserCreatedDto createUser(HttpHeaders headers, CreateUserDto dto) {
+        final String username = JwtUtil.parseToken(headers.getFirst("Authorization"));
+        if (!userRoleRepository.existsByIdUserAndIdRole(username, 4)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No tiene los permisos para poder realizar esta acción.");
+        }
         final User user = User.fromDto(dto);
         final String login = generateEmail(dto);
         final UserCreatedDto userCreatedDto = new UserCreatedDto(login, login + "@enactusumg.com", generatePassword());
@@ -125,14 +142,20 @@ public class UserService {
      * @author Carlos Ramos (cramosl3@miumg.edu.gt)
      */
     @Transactional
-    public boolean changePassword(UserDto dto, String token) {
+    public boolean changePassword(@Nullable HttpHeaders headers, UserDto dto, String token) {
         final String msg = "El token está vencido o es incorrecto";
         final EmailBodyDto bodyDto = new EmailBodyDto();
+
+        if (headers != null) {
+            if (!dto.getUsername().equalsIgnoreCase(JwtUtil.parseToken(headers.getFirst("Authorization")))) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No tiene los permisos para poder realizar esta accion.");
+            }
+        }
+
         final User user = userRepository.findById(dto.getUsername()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.")
         );
-
-        if(token != null){
+        if (token != null) {
             if (!BCrypt.checkpw(token, user.getPassword())) {
                 throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, msg);
             }
@@ -224,5 +247,5 @@ public class UserService {
         }
         return Integer.parseInt(dateStr);
     }
-    
+
 }

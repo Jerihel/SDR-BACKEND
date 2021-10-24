@@ -19,4 +19,6 @@ public interface UserRoleRepository extends CrudRepository<UserRole, Integer> {
     List<UserRole> findAll();
 
     List<UserRole> findByIdUser(String s);
+
+    boolean existsByIdUserAndIdRole(String idUser, Integer idRole);
 }

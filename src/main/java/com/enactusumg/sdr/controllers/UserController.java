@@ -11,6 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
@@ -26,22 +27,28 @@ public class UserController {
     @Autowired
     public UserService userService;
 
+    @PostMapping(value = "external/users/refresh/token")
+    @ApiOperation(value = "Retorna todos los usuarios registrados en el sistema.")
+    public UserLoggedDto refreshToken(@RequestHeader HttpHeaders headers) {
+        return null;
+    }
+
     @GetMapping(value = "internal/users/find")
     @ApiOperation(value = "Retorna todos los usuarios registrados en el sistema.")
-    public List<User> getAllUser() {
-        return userService.getAllUsers();
+    public List<User> getAllUser(@RequestHeader HttpHeaders headers) {
+        return userService.getAllUsers(headers);
     }
 
     @GetMapping(value = "internal/users/find/{userId}")
     @ApiOperation(value = "Retorna todos los usuarios registrados en el sistema.")
-    public User getUser(@PathVariable String userId) {
-        return userService.getUser(userId);
+    public User getUser(@RequestHeader HttpHeaders headers, @PathVariable String userId) {
+        return userService.getUser(headers, userId);
     }
 
     @PostMapping(value = "internal/users/create")
     @ApiOperation(value = "Crea un registro de usuario en base de datos.")
-    public UserCreatedDto createUser(@RequestBody CreateUserDto dto) {
-        return userService.createUser(dto);
+    public UserCreatedDto createUser(@RequestHeader HttpHeaders headers, @RequestBody CreateUserDto dto) {
+        return userService.createUser(headers, dto);
     }
 
     @PatchMapping(value = "internal/users/edit")
@@ -53,15 +60,12 @@ public class UserController {
     @ApiOperation(value = "Inicia la sesion de un usuario en base a el nombre de usuario y contraseña.")
     public UserLoggedDto loginUser(@RequestBody UserDto dto) {
         final String msg = "Credenciales invalidas. Por favor, revise que el usuario y la contraseña sean los correctos.";
-        final User user = userService.getUser(dto.getUsername().replace("@enactusumg.com", ""));
+        final User user = userService.getUser(null, dto.getUsername().replace("@enactusumg.com", ""));
         if (!BCrypt.checkpw(dto.getPassword(), user.getPassword())) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, msg);
         }
         return UserLoggedDto.builder()
                 .username(user.getIdUser())
-                .name(user.getName())
-                .lastName(user.getLastName())
-                .email(user.getEmail())
                 .token(JwtUtil.generateToken(dto.getUsername()))
                 .roles(userService.getRolesByUser(user.getIdUser()))
                 .build();
@@ -70,7 +74,7 @@ public class UserController {
     @PatchMapping(value = "external/users/recover/password/{token}")
     @ApiOperation(value = "Recupera la contraseña de un usuario en base de datos.")
     public boolean recoverPassword(@PathVariable String token, @RequestBody UserDto dto) {
-        return userService.changePassword(dto, token);
+        return userService.changePassword(null, dto, token);
     }
 
     @PatchMapping(value = "external/users/request/recover/password/{username}")
@@ -81,8 +85,8 @@ public class UserController {
 
     @PatchMapping(value = "internal/users/change/password")
     @ApiOperation(value = "Actualiza la contraseña de un usuario en base de datos.")
-    public boolean updatePassword(@RequestBody UserDto dto) {
-        return userService.changePassword(dto, null);
+    public boolean updatePassword(@RequestHeader HttpHeaders headers, @RequestBody UserDto dto) {
+        return userService.changePassword(headers, dto, null);
     }
 
 }

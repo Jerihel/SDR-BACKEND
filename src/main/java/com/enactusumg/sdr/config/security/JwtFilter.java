@@ -1,5 +1,7 @@
 package com.enactusumg.sdr.config.security;
 
+import com.enactusumg.sdr.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
@@ -14,6 +16,12 @@ import java.io.IOException;
 
 public class JwtFilter extends GenericFilterBean {
 
+    final UserService userService;
+
+    public JwtFilter(UserService userService) {
+        this.userService = userService;
+    }
+
     @Override
     public void doFilter(ServletRequest request,
                          ServletResponse response,
@@ -21,7 +29,7 @@ public class JwtFilter extends GenericFilterBean {
             throws IOException, ServletException {
 
 
-        Authentication authentication = JwtUtil.getAuthentication((HttpServletRequest) request, (HttpServletResponse) response);
+        Authentication authentication = JwtUtil.getAuthentication((HttpServletRequest) request, (HttpServletResponse) response, userService);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
