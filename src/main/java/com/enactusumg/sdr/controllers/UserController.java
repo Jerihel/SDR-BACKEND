@@ -27,10 +27,16 @@ public class UserController {
     @Autowired
     public UserService userService;
 
-    @PostMapping(value = "external/users/refresh/token")
+    @PostMapping(value = "internal/users/token/refresh")
     @ApiOperation(value = "Retorna todos los usuarios registrados en el sistema.")
     public UserLoggedDto refreshToken(@RequestHeader HttpHeaders headers) {
-        return null;
+        return userService.refreshToken(headers);
+    }
+
+    @PostMapping(value = "internal/users/token/revoke")
+    @ApiOperation(value = "Retorna todos los usuarios registrados en el sistema.")
+    public void revokeToken(@RequestHeader HttpHeaders headers) {
+        userService.revokeToken(headers);
     }
 
     @GetMapping(value = "internal/users/find")
@@ -59,16 +65,7 @@ public class UserController {
     @PostMapping(value = "external/users/login")
     @ApiOperation(value = "Inicia la sesion de un usuario en base a el nombre de usuario y contraseña.")
     public UserLoggedDto loginUser(@RequestBody UserDto dto) {
-        final String msg = "Credenciales invalidas. Por favor, revise que el usuario y la contraseña sean los correctos.";
-        final User user = userService.getUser(null, dto.getUsername().replace("@enactusumg.com", ""));
-        if (!BCrypt.checkpw(dto.getPassword(), user.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, msg);
-        }
-        return UserLoggedDto.builder()
-                .username(user.getIdUser())
-                .token(JwtUtil.generateToken(dto.getUsername()))
-                .roles(userService.getRolesByUser(user.getIdUser()))
-                .build();
+        return userService.authUser(dto);
     }
 
     @PatchMapping(value = "external/users/recover/password/{token}")

@@ -1,6 +1,7 @@
 package com.enactusumg.sdr.models;
 
 import com.enactusumg.sdr.dto.CreateUserDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,6 +17,7 @@ public class User {
     private String email;
     private String password;
     private Integer state;
+    private String token;
 
     public User() {
     }
@@ -71,6 +73,7 @@ public class User {
         return password;
     }
 
+    @JsonIgnore
     @Column(name = "password")
     public void setPassword(String password) {
         this.password = password;
@@ -83,5 +86,15 @@ public class User {
 
     public void setState(Integer state) {
         this.state = state;
+    }
+
+    @JsonIgnore
+    @Column(name = "token")
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

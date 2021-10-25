@@ -1,10 +1,7 @@
 package com.enactusumg.sdr.services;
 
 import com.enactusumg.sdr.config.security.JwtUtil;
-import com.enactusumg.sdr.dto.CreateUserDto;
-import com.enactusumg.sdr.dto.EmailBodyDto;
-import com.enactusumg.sdr.dto.UserCreatedDto;
-import com.enactusumg.sdr.dto.UserDto;
+import com.enactusumg.sdr.dto.*;
 import com.enactusumg.sdr.models.User;
 import com.enactusumg.sdr.models.UserRole;
 import com.enactusumg.sdr.repositories.UserRepository;
@@ -226,6 +223,42 @@ public class UserService {
         return true;
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public UserLoggedDto authUser(UserDto dto) {
+        final String msg = "Credenciales invalidas. Por favor, revise que el usuario y la contraseña sean los correctos.";
+        final User user = userRepository.findById(dto.getUsername().replace("@enactusumg.com", "")).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, msg)
+        );
+        if (!BCrypt.checkpw(dto.getPassword(), user.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, msg);
+        }
+
+        user.setToken(JwtUtil.generateToken(dto.getUsername()));
+
+        return UserLoggedDto.builder()
+                .username(user.getIdUser())
+                .token(user.getToken())
+                .roles(getRolesByUser(user.getIdUser()))
+                .build();
+    }
+
+    @Transactional
+    public UserLoggedDto refreshToken(HttpHeaders headers) {
+        final User user = getTokenByHeader(headers);
+        user.setToken(JwtUtil.generateToken(user.getIdUser()));
+        return UserLoggedDto.builder()
+                .username(user.getIdUser())
+                .token(user.getToken())
+                .roles(getRolesByUser(user.getIdUser()))
+                .build();
+    }
+
+    @Transactional
+    public void revokeToken(HttpHeaders headers) {
+        final User user = getTokenByHeader(headers);
+        user.setToken(null);
+    }
+
     private String generateEmail(CreateUserDto dto) {
         final String[] nameParts = dto.getName().split(" ");
         final String names = nameParts.length == 1 ? String.valueOf(nameParts[0].charAt(0)) : Arrays.stream(nameParts).reduce((s, s2) -> String.valueOf(s.charAt(0)) + s2.charAt(0)).orElse("");
@@ -248,4 +281,9 @@ public class UserService {
         return Integer.parseInt(dateStr);
     }
 
+    private User getTokenByHeader(HttpHeaders headers){
+        return userRepository.findById(JwtUtil.parseToken(headers.getFirst("Authorization"))).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.")
+        );
+    }
 }
