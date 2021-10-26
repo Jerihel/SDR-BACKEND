@@ -66,13 +66,37 @@ public class UserService {
      * @author Carlos Ramos (cramosl3@miumg.edu.gt)
      */
     @Transactional(readOnly = true)
-    public User getUser(@Nullable HttpHeaders headers, String userId) {
+    public UserProfileDto getUser(@Nullable HttpHeaders headers, String userId) {
         if (headers != null) {
             final String username = JwtUtil.parseToken(headers.getFirst("Authorization"));
             if (!userId.equalsIgnoreCase(username)) {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No tiene los permisos para poder realizar esta acción.");
             }
         }
+
+        final User user = userRepository.findById(userId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.")
+        );
+
+        return UserProfileDto.builder()
+                .username(user.getIdUser())
+                .name(user.getName())
+                .lastName(user.getLastName())
+                .roles(getRolesByUser(user.getIdUser()))
+                .email(user.getEmail())
+                .state(user.getState())
+                .build();
+    }
+
+    /**
+     * Este metodo es de solo lectura (no se adhiere a una transacción existente) encargado de consultar todos los usuarios
+     * registrados en base de datos.
+     *
+     * @return Usuario {@link User} registrado en la base de datos.
+     * @author Carlos Ramos (cramosl3@miumg.edu.gt)
+     */
+    @Transactional(readOnly = true)
+    public User getUser(String userId) {
         return userRepository.findById(userId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.")
         );
@@ -139,28 +163,29 @@ public class UserService {
      * @author Carlos Ramos (cramosl3@miumg.edu.gt)
      */
     @Transactional
-    public boolean changePassword(@Nullable HttpHeaders headers, UserDto dto, String token) {
-        final String msg = "El token está vencido o es incorrecto";
+    public boolean changePassword(@Nullable HttpHeaders headers, ChangePassDto dto) {
         final EmailBodyDto bodyDto = new EmailBodyDto();
 
         if (headers != null) {
             if (!dto.getUsername().equalsIgnoreCase(JwtUtil.parseToken(headers.getFirst("Authorization")))) {
+                revokeToken(headers);
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No tiene los permisos para poder realizar esta accion.");
             }
         }
 
-        final User user = userRepository.findById(dto.getUsername()).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.")
+        final User user = userRepository.findById(dto.getUsername()).orElseThrow(() -> {
+                    revokeToken(headers);
+                    return new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No tiene los permisos para poder realizar esta accion.");
+                }
         );
-        if (token != null) {
-            if (!BCrypt.checkpw(token, user.getPassword())) {
-                throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, msg);
-            }
+
+        if (!BCrypt.checkpw(dto.getOldPass(), user.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "La contraseña ingresada es incorrecta.");
         }
 
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("email", user.getEmail());
-        map.add("password", dto.getPassword());
+        map.add("password", dto.getNewPass());
 
         final String resp = webConsumerService.consume(
                 map,
@@ -169,7 +194,7 @@ public class UserService {
                 MediaType.APPLICATION_FORM_URLENCODED,
                 HttpMethod.POST
         );
-        user.setPassword(BCrypt.hashpw(dto.getPassword(), BCrypt.gensalt()));
+        user.setPassword(BCrypt.hashpw(dto.getNewPass(), BCrypt.gensalt()));
 
         bodyDto.setEmail(user.getEmail());
         bodyDto.setTemplateId("d-ab4965009ad64c53a5051e7d128d6aee");
@@ -281,7 +306,7 @@ public class UserService {
         return Integer.parseInt(dateStr);
     }
 
-    private User getTokenByHeader(HttpHeaders headers){
+    private User getTokenByHeader(HttpHeaders headers) {
         return userRepository.findById(JwtUtil.parseToken(headers.getFirst("Authorization"))).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.")
         );

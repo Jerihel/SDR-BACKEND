@@ -44,7 +44,7 @@ public class JwtUtil {
         if (token != null) {
             try {
                 String username = parseToken(token);
-                User user = userService.getUser(null, username);
+                User user = userService.getUser(username);
                 if (user != null && user.getToken() != null && user.getToken().equals(token)) {
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                             user,
