@@ -17,4 +17,7 @@ public interface CriterioRepository extends CrudRepository<CriterionEvaluation,I
     @Transactional(readOnly = true)
     @Query(value = "select new com.enactusumg.sdr.projections.CriterionEvalutionProjection( ce.noCriterio,  ce.nombreCriterio,  ce.ponderacion,  ch.name) from CriterionEvaluation ce join CatalogueChild ch on ch.idCatalogueChild=ce.estado",nativeQuery = false)
     List<CriterionEvalutionProjection> obtenerCriterionEvaluation();
+
+    @Transactional(readOnly = true)
+    boolean existsByNombreCriterio(String nombreCriterio);
 }

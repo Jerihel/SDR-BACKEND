@@ -5,6 +5,7 @@ import com.enactusumg.sdr.dto.CriterionDto;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Locale;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -26,7 +27,7 @@ public class CriterionEvaluation implements Serializable {
         CriterionEvaluation criterion = new CriterionEvaluation();
 
         criterion.setEstado(7);
-        criterion.setNombreCriterio(dto.getNombreCriterio());
+        criterion.setNombreCriterio(dto.getNombreCriterio().toLowerCase());
         criterion.setUsuarioAgrega(dto.getUsuarioAgrega());
         criterion.setPonderacion(dto.getPonderacion());
         criterion.setFechaAgrega(new Date());

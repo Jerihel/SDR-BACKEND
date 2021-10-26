@@ -25,48 +25,55 @@ public class CriterionService {
     Logger logger = LoggerFactory.getLogger(CriterionService.class);
 
 
-    public CriterionEvaluation createCriterio(CriterionDto dto){
+    public CriterionEvaluation createCriterio(CriterionDto dto) {
         logger.info("creando crieterio");
 
-     CriterionEvaluation criterio = CriterionEvaluation.createCriterion(dto);
+        if (criterioRps.existsByNombreCriterio(dto.getNombreCriterio())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error. Ya existe un criterio con el nobmre: " + dto.getNombreCriterio());
 
-return criterioRps.save(criterio);
+
+        }
+
+        CriterionEvaluation criterio = CriterionEvaluation.createCriterion(dto);
+
+        return criterioRps.save(criterio);
     }
 
     @Transactional
-public CriterionEvaluation upDateCriterio(CriterionUpdatDto dto){
-  if(!criterioRps.existsById(dto.getNoCriterio())){
+    public CriterionEvaluation upDateCriterio(CriterionUpdatDto dto) {
+        if (!criterioRps.existsById(dto.getNoCriterio())) {
 
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Error. No existe el criterio a Actualizar");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error. No existe el criterio a Actualizar");
 
-  }
-
-  logger.info("actualizando criterio");
+        }
 
 
-    Optional<CriterionEvaluation> criterionEvaluation= criterioRps.findById(dto.getNoCriterio());
+        logger.info("actualizando criterio");
 
-    CriterionEvaluation criterio= criterionEvaluation.get();
 
-    criterio.setNombreCriterio(dto.getNombreCriterio());
-    criterio.setPonderacion(dto.getPonderacion());
-    criterio.setFechaModifica(new Date());
-    criterio.setUsuarioModifica(dto.getUsuarioModifica());
+        Optional<CriterionEvaluation> criterionEvaluation = criterioRps.findById(dto.getNoCriterio());
 
-logger.info("datos criterio "+ criterio.toString());
-return criterio;
-}
+        CriterionEvaluation criterio = criterionEvaluation.get();
 
-public List<CriterionEvalutionProjection> getAllCriterion(){
+        criterio.setNombreCriterio(dto.getNombreCriterio());
+        criterio.setPonderacion(dto.getPonderacion());
+        criterio.setFechaModifica(new Date());
+        criterio.setUsuarioModifica(dto.getUsuarioModifica());
+
+        logger.info("datos criterio " + criterio.toString());
+        return criterio;
+    }
+
+    public List<CriterionEvalutionProjection> getAllCriterion() {
         logger.info("obteniendo todos los criterios");
 
-        List<CriterionEvalutionProjection> criterios= criterioRps.obtenerCriterionEvaluation();
+        List<CriterionEvalutionProjection> criterios = criterioRps.obtenerCriterionEvaluation();
 
-        if(criterios.isEmpty()){
+        if (criterios.isEmpty()) {
 
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"No existen datos");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No existen datos");
         }
 
         return criterios;
-}
+    }
 }
