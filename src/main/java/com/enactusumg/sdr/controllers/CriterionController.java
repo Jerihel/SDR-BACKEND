@@ -19,7 +19,7 @@ public class CriterionController {
     CriterionService criterionService;
 
 
-    @GetMapping(value = "external/get/allCriterion")
+    @GetMapping(value = "internal/get/allCriterion")
     @ApiOperation(value = "retorna todos los criterios que contiene el sistema")
     public List<CriterionEvalutionProjection> getAllCriterions(){
 

@@ -1,0 +1,39 @@
+package com.enactusumg.sdr.controllers;
+
+import com.enactusumg.sdr.models.CatalogueChild;
+import com.enactusumg.sdr.services.CatalogueChildService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@Api
+@RestController
+public class CatalogueChildController {
+
+
+    @Autowired
+    CatalogueChildService catalogueChildService;
+
+
+    @GetMapping(value="internal/catalogue/getAll")
+    @ApiOperation(value="obtiene todos los catalogos hijos registrados")
+    public List<CatalogueChild> getAllCatalogueChild(){
+
+
+        return catalogueChildService.getAllCatalogueChild();
+    }
+
+    @GetMapping(value = "internal/catalogue/getBy/{id}")
+    @ApiOperation(value="obtiene todos los catalogos hijos segun el id del padre")
+    public  List<CatalogueChild> getAllCatalogueById(@PathVariable @ApiParam(value = "id del catalogo padre")Integer id){
+
+        return catalogueChildService.getAllCatlaogueChildByParent(id);
+
+    }
+}
