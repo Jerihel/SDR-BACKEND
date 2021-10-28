@@ -1,12 +1,10 @@
 package com.enactusumg.sdr.models;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "user_roles", schema = "enactus_sreg")
+@IdClass(UserRoleId.class)
 public class UserRole {
     private Integer idRole;
     private String idUser;
@@ -29,6 +27,7 @@ public class UserRole {
         this.idRole = idRole;
     }
 
+    @Id
     @Column(name = "id_user", length = 20)
     public String getIdUser() {
         return idUser;

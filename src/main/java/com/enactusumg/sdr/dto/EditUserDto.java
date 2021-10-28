@@ -5,9 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class CreateUserDto {
-    private String name;
-    private String lastName;
+public class EditUserDto {
     private Integer state;
     private List<Integer> roles;
 }

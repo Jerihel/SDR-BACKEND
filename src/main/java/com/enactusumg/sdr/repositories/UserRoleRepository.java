@@ -21,4 +21,6 @@ public interface UserRoleRepository extends CrudRepository<UserRole, Integer> {
     List<UserRole> findByIdUser(String s);
 
     boolean existsByIdUserAndIdRole(String idUser, Integer idRole);
+
+    void deleteByIdUser(String idUser);
 }

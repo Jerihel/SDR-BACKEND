@@ -4,6 +4,7 @@ import com.enactusumg.sdr.config.security.JwtUtil;
 import com.enactusumg.sdr.dto.*;
 import com.enactusumg.sdr.models.User;
 import com.enactusumg.sdr.models.UserRole;
+import com.enactusumg.sdr.projections.UserDetailProjection;
 import com.enactusumg.sdr.repositories.UserRepository;
 import com.enactusumg.sdr.repositories.UserRoleRepository;
 import com.enactusumg.sdr.repositories.WebConsumerService;
@@ -50,12 +51,12 @@ public class UserService {
      * @author Carlos Ramos (cramosl3@miumg.edu.gt)
      */
     @Transactional(readOnly = true)
-    public List<User> getAllUsers(HttpHeaders headers) {
+    public List<UserDetailProjection> getAllUsers(HttpHeaders headers) {
         final String username = JwtUtil.parseToken(headers.getFirst("Authorization"));
         if (!userRoleRepository.existsByIdUserAndIdRole(username, 4)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No tiene los permisos para poder realizar esta acción.");
         }
-        return userRepository.findAll();
+        return userRepository.findAllPopulated();
     }
 
     /**
@@ -67,16 +68,7 @@ public class UserService {
      */
     @Transactional(readOnly = true)
     public UserProfileDto getUser(@Nullable HttpHeaders headers, String userId) {
-        if (headers != null) {
-            final String username = JwtUtil.parseToken(headers.getFirst("Authorization"));
-            if (!userId.equalsIgnoreCase(username)) {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No tiene los permisos para poder realizar esta acción.");
-            }
-        }
-
-        final User user = userRepository.findById(userId).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.")
-        );
+        final User user = validateToken(headers, userId);
 
         return UserProfileDto.builder()
                 .username(user.getIdUser())
@@ -125,9 +117,7 @@ public class UserService {
 
         userRepository.save(user);
 
-        dto.getRoles().forEach(role -> {
-            userRoleRepository.save(new UserRole(role, login));
-        });
+        dto.getRoles().forEach(role -> userRoleRepository.save(new UserRole(role, login)));
 
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("email", userCreatedDto.getEmail());
@@ -284,6 +274,21 @@ public class UserService {
         user.setToken(null);
     }
 
+    /**
+     * Este metodo es de solo lectura (no se adhiere a una transacción existente) encargado de actualizar un usuario
+     * registrado en base de datos.
+     *
+     * @author Carlos Ramos (cramosl3@miumg.edu.gt)
+     */
+    @Transactional
+    public void updateUser(@Nullable HttpHeaders headers, String userId, EditUserDto dto) {
+        final User user = validateToken(headers, userId);
+
+        user.setState(dto.getState());
+        userRoleRepository.deleteByIdUser(userId);
+        dto.getRoles().forEach(role -> userRoleRepository.save(new UserRole(role, userId)));
+    }
+
     private String generateEmail(CreateUserDto dto) {
         final String[] nameParts = dto.getName().split(" ");
         final String names = nameParts.length == 1 ? String.valueOf(nameParts[0].charAt(0)) : Arrays.stream(nameParts).reduce((s, s2) -> String.valueOf(s.charAt(0)) + s2.charAt(0)).orElse("");
@@ -308,6 +313,19 @@ public class UserService {
 
     private User getTokenByHeader(HttpHeaders headers) {
         return userRepository.findById(JwtUtil.parseToken(headers.getFirst("Authorization"))).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.")
+        );
+    }
+
+    private User validateToken(HttpHeaders headers, String userId) {
+        if (headers != null) {
+            final String username = JwtUtil.parseToken(headers.getFirst("Authorization"));
+            if (!userId.equalsIgnoreCase(username)) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No tiene los permisos para poder realizar esta acción.");
+            }
+        }
+
+        return userRepository.findById(userId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.")
         );
     }

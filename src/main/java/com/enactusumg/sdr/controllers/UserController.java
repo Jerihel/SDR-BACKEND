@@ -1,7 +1,7 @@
 package com.enactusumg.sdr.controllers;
 
 import com.enactusumg.sdr.dto.*;
-import com.enactusumg.sdr.models.User;
+import com.enactusumg.sdr.projections.UserDetailProjection;
 import com.enactusumg.sdr.services.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,7 +34,7 @@ public class UserController {
 
     @GetMapping(value = "internal/users/find")
     @ApiOperation(value = "Retorna todos los usuarios registrados en el sistema.")
-    public List<User> getAllUser(@RequestHeader HttpHeaders headers) {
+    public List<UserDetailProjection> getAllUser(@RequestHeader HttpHeaders headers) {
         return userService.getAllUsers(headers);
     }
 
@@ -50,9 +50,10 @@ public class UserController {
         return userService.createUser(headers, dto);
     }
 
-    @PatchMapping(value = "internal/users/edit")
+    @PatchMapping(value = "internal/users/edit/{username}")
     @ApiOperation(value = "Actualiza el registro de un usuario en base de datos.")
-    public void updateUser() {
+    public void updateUser(@RequestHeader HttpHeaders headers, @PathVariable String username, @RequestBody EditUserDto dto) {
+        userService.updateUser(headers, username, dto);
     }
 
     @PostMapping(value = "external/users/login")
