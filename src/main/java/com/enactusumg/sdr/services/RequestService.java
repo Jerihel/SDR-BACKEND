@@ -6,6 +6,7 @@ import com.enactusumg.sdr.dto.RequestEnacterDto;
 import com.enactusumg.sdr.dto.RequestEnacterQuery;
 import com.enactusumg.sdr.models.Request;
 import com.enactusumg.sdr.models.UserRequest;
+import com.enactusumg.sdr.projections.SolicitudesAsignables;
 import com.enactusumg.sdr.repositories.RequestRepository;
 import static java.lang.Math.log;
 import java.util.List;
@@ -102,5 +103,21 @@ return requestEnacterDto;
     public List<Request> getAllRequestStatus() {
         logger.debug("Consultado todas las solicitudes con estado Analisis de la Solicitud");
         return requestRpstry.findAllRequestStatus();
+    }
+
+    @Transactional(readOnly = true)
+    public  List<SolicitudesAsignables> getSolicitudesReasignacion(){
+        logger.info("recuperando solicitudes asignables ");
+
+        List<SolicitudesAsignables> solicitudes = requestRpstry.getAllSolicitudesReasignacion();
+
+        if(solicitudes.isEmpty()){
+
+
+            throw  new ResponseStatusException(HttpStatus.NOT_FOUND,"No existen solicitudes ");
+        }
+
+
+        return solicitudes;
     }
 }

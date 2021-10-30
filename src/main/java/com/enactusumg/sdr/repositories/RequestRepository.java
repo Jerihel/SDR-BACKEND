@@ -1,6 +1,7 @@
 package com.enactusumg.sdr.repositories;
 
 import com.enactusumg.sdr.models.Request;
+import com.enactusumg.sdr.projections.SolicitudesAsignables;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
@@ -21,4 +22,11 @@ public interface RequestRepository extends CrudRepository<Request, Integer> {
             nativeQuery = true
     )
     List<Request> findAllRequestStatus();
+
+
+
+    @Query(value=("select new com.enactusumg.sdr.projections.SolicitudesAsignables( r.idRequest,  r.name,  u.name, c.name) from Request r join CatalogueChild  c on  c.idCatalogueChild=r.state " +
+            "join User u on u.idUser=r.idRequest where r.state not in(11) "),nativeQuery = false)
+    List<SolicitudesAsignables> getAllSolicitudesReasignacion();
+
 }

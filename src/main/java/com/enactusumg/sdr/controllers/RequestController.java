@@ -3,6 +3,7 @@ package com.enactusumg.sdr.controllers;
 import com.enactusumg.sdr.dto.RequestEnacterDto;
 import com.enactusumg.sdr.dto.RequestEnacterQuery;
 import com.enactusumg.sdr.models.Request;
+import com.enactusumg.sdr.projections.SolicitudesAsignables;
 import com.enactusumg.sdr.services.RequestService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -41,10 +42,19 @@ public class RequestController {
     public List<Request> getRequest() {
         return requestSrv.getAllRequest();
     }
-    
+
+
     @GetMapping(value = "external/get/requestUserEnacters/statusAnalysis")
     @ApiOperation(value = "Retorna todas las solicitudes con estado -Analisis de la Solicitud-.")
     public List<Request> getRequestStatus() {
         return requestSrv.getAllRequestStatus();
     }
+
+
+   @GetMapping(value="external/get/requestReasignables")
+    @ApiOperation(value = "retorna las solicitudes para su reasignacion")
+    public List<SolicitudesAsignables> getSolicitudesResignables(){
+
+        return requestSrv.getSolicitudesReasignacion();
+   }
 }
