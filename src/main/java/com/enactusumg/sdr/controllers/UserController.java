@@ -40,8 +40,8 @@ public class UserController {
 
     @GetMapping(value = "internal/users/find/{userId}")
     @ApiOperation(value = "Retorna todos los usuarios registrados en el sistema.")
-    public UserProfileDto getUser(@RequestHeader HttpHeaders headers, @PathVariable String userId) {
-        return userService.getUser(headers, userId);
+    public UserProfileDto getUser(@PathVariable String userId) {
+        return userService.getUserProfile(userId);
     }
 
     @PostMapping(value = "internal/users/create")
@@ -52,8 +52,8 @@ public class UserController {
 
     @PatchMapping(value = "internal/users/edit/{username}")
     @ApiOperation(value = "Actualiza el registro de un usuario en base de datos.")
-    public void updateUser(@RequestHeader HttpHeaders headers, @PathVariable String username, @RequestBody EditUserDto dto) {
-        userService.updateUser(headers, username, dto);
+    public void updateUser(@PathVariable String username, @RequestBody EditUserDto dto) {
+        userService.updateUser(username, dto);
     }
 
     @PostMapping(value = "external/users/login")

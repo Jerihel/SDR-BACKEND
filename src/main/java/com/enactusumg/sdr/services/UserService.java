@@ -67,8 +67,8 @@ public class UserService {
      * @author Carlos Ramos (cramosl3@miumg.edu.gt)
      */
     @Transactional(readOnly = true)
-    public UserProfileDto getUser(@Nullable HttpHeaders headers, String userId) {
-        final User user = validateToken(headers, userId);
+    public UserProfileDto getUserProfile(String userId) {
+        final User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado."));
 
         return UserProfileDto.builder()
                 .username(user.getIdUser())
@@ -129,7 +129,19 @@ public class UserService {
                 MediaType.APPLICATION_FORM_URLENCODED,
                 HttpMethod.POST
         );
-        System.out.println(resp);
+        final EmailBodyDto bodyDto = new EmailBodyDto();
+        bodyDto.setEmail(userCreatedDto.getEmail());
+        bodyDto.setTemplateId("d-a56dad7fb12048c8a080762f441261fd");
+
+        Map<String, String> params = new HashMap<>();
+        params.put("name", user.getName() + " " + user.getLastName());
+        params.put("username", user.getIdUser());
+        params.put("password", userCreatedDto.getPassword());
+
+        try {
+            emailService.sendEmail(bodyDto, params);
+        } catch (IOException e) {
+        }
         return userCreatedDto;
     }
 
@@ -282,8 +294,10 @@ public class UserService {
      * @author Carlos Ramos (cramosl3@miumg.edu.gt)
      */
     @Transactional
-    public void updateUser(@Nullable HttpHeaders headers, String userId, EditUserDto dto) {
-        final User user = validateToken(headers, userId);
+    public void updateUser(String userId, EditUserDto dto) {
+        final User user = userRepository.findById(userId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.")
+        );
 
         user.setState(dto.getState());
         userRoleRepository.deleteByIdUser(userId);
