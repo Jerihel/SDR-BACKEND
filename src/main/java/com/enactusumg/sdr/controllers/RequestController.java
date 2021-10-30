@@ -51,7 +51,7 @@ public class RequestController {
     }
 
 
-   @GetMapping(value="external/get/requestReasignables")
+   @GetMapping(value="internal/get/requestReasignables")
     @ApiOperation(value = "retorna las solicitudes para su reasignacion")
     public List<SolicitudesAsignables> getSolicitudesResignables(){
 
