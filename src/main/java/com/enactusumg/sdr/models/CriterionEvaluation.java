@@ -26,7 +26,7 @@ public class CriterionEvaluation implements Serializable {
      public static CriterionEvaluation createCriterion(CriterionDto dto){
         CriterionEvaluation criterion = new CriterionEvaluation();
 
-        criterion.setEstado(3);
+        criterion.setEstado(5);
         criterion.setNombreCriterio(dto.getNombreCriterio().toLowerCase());
         criterion.setUsuarioAgrega(dto.getUsuarioAgrega());
         criterion.setPonderacion(dto.getPonderacion());
