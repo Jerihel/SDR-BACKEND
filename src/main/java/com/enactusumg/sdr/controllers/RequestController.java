@@ -8,9 +8,10 @@ import com.enactusumg.sdr.services.RequestService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @Api
@@ -27,7 +28,7 @@ public class RequestController {
 
     @PatchMapping(value = "/external/requestUserEnacters/update")
     @ApiOperation(value = "actualiza una solicitud de usuario enacters")
-    public Request updateRequestUser(@RequestBody Request dto){
+    public Request updateRequestUser(@RequestBody Request dto) {
         return requestSrv.updateRequest(dto);
     }
 
@@ -36,13 +37,12 @@ public class RequestController {
     public Request saveRequest(@RequestBody RequestEnacterDto dto) {
         return requestSrv.saveRequest(dto);
     }
-    
+
     @GetMapping(value = "external/get/requestUserEnacters/status")
     @ApiOperation(value = "Retorna todas las solicitudes con estado diferente a finalizado.")
     public List<Request> getRequest() {
         return requestSrv.getAllRequest();
     }
-
 
     @GetMapping(value = "external/get/requestUserEnacters/statusAnalysis")
     @ApiOperation(value = "Retorna todas las solicitudes con estado -Analisis de la Solicitud-.")
@@ -50,11 +50,15 @@ public class RequestController {
         return requestSrv.getAllRequestStatus();
     }
 
-
-   @GetMapping(value="internal/get/requestReasignables")
+    @GetMapping(value = "internal/get/requestReasignables")
     @ApiOperation(value = "retorna las solicitudes para su reasignacion")
-    public List<SolicitudesAsignables> getSolicitudesResignables(){
-
+    public List<SolicitudesAsignables> getSolicitudesResignables() {
         return requestSrv.getSolicitudesReasignacion();
-   }
+    }
+
+    @PostMapping(value = "internal/reasign/requestReasignables")
+    @ApiOperation(value = "reasigna las solicitudes para su reasignacion")
+    public void reasignarSolicitudes(@RequestBody List<Integer> idSolicitudes) {
+        requestSrv.reasignarSolicitudes(idSolicitudes);
+    }
 }
