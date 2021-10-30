@@ -79,6 +79,12 @@ public class UserController {
         return userService.requestChangePassword(username);
     }
 
+    @PostMapping(value = "external/users/request/recover/validate/{username}/{token}")
+    @ApiOperation(value = "Recupera la contraseña de un usuario en base de datos.")
+    public boolean validateToken(@PathVariable String username, @PathVariable String token) {
+        return userService.validateToken(username, token);
+    }
+
     @PatchMapping(value = "internal/users/change/password")
     @ApiOperation(value = "Actualiza la contraseña de un usuario en base de datos.")
     public boolean updatePassword(@RequestHeader HttpHeaders headers, @RequestBody ChangePassDto dto) {

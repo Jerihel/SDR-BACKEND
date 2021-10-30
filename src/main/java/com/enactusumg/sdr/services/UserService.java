@@ -231,6 +231,7 @@ public class UserService {
         try {
             emailService.sendEmail(bodyDto, params);
             user.setPassword(BCrypt.hashpw(token.toString(), BCrypt.gensalt()));
+            log.info("Codigo: " + token);
         } catch (IOException e) {
             return false;
         }
@@ -287,6 +288,17 @@ public class UserService {
         user.setState(dto.getState());
         userRoleRepository.deleteByIdUser(userId);
         dto.getRoles().forEach(role -> userRoleRepository.save(new UserRole(role, userId)));
+    }
+
+    @Transactional(readOnly = true)
+    public boolean validateToken(String userId, String token) {
+        final User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No tiene los permisos para poder realizar esta accion.")
+        );
+
+        if (!BCrypt.checkpw(token, user.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "La contraseña ingresada es incorrecta.");
+        }
+        return true;
     }
 
     private String generateEmail(CreateUserDto dto) {
