@@ -21,7 +21,7 @@ public class CatalogueChildController {
     CatalogueChildService catalogueChildService;
 
 
-    @GetMapping(value="internal/catalogue/getAll")
+    @GetMapping(value="external/catalogue/getAll")
     @ApiOperation(value="obtiene todos los catalogos hijos registrados")
     public List<CatalogueChild> getAllCatalogueChild(){
 
@@ -29,7 +29,7 @@ public class CatalogueChildController {
         return catalogueChildService.getAllCatalogueChild();
     }
 
-    @GetMapping(value = "internal/catalogue/getBy/{id}")
+    @GetMapping(value = "external/catalogue/getBy/{id}")
     @ApiOperation(value="obtiene todos los catalogos hijos segun el id del padre")
     public  List<CatalogueChild> getAllCatalogueById(@PathVariable @ApiParam(value = "id del catalogo padre")Integer id){
 
