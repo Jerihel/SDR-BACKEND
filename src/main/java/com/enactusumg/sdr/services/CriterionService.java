@@ -54,12 +54,14 @@ public class CriterionService {
         Optional<CriterionEvaluation> criterionEvaluation = criterioRps.findById(dto.getNoCriterio());
 
         CriterionEvaluation criterio = criterionEvaluation.get();
-
+logger.info("numero a actualizar" + dto.getEstadoColaborador());
         criterio.setNombreCriterio(dto.getNombreCriterio());
         criterio.setPonderacion(dto.getPonderacion());
         criterio.setFechaModifica(new Date());
+        criterio.setEstado(dto.getEstadoColaborador());
         criterio.setUsuarioModifica(dto.getUsuarioModifica());
 
+        logger.info("datos estado " + criterio.getEstado());
         logger.info("datos criterio " + criterio.toString());
         return criterio;
     }
