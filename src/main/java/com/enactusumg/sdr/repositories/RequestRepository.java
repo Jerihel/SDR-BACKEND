@@ -26,7 +26,7 @@ public interface RequestRepository extends CrudRepository<Request, Integer> {
 
 
     @Query(value=("select new com.enactusumg.sdr.projections.SolicitudesAsignables( r.idRequest,  r.name,  u.name, c.name) from Request r join CatalogueChild  c on  c.idCatalogueChild=r.state " +
-            "join User u on u.idUser=r.idReviwer where r.state not in(11) "),nativeQuery = false)
+            " lef join User u on u.idUser=r.idReviwer where r.state not in(11) "),nativeQuery = false)
     List<SolicitudesAsignables> getAllSolicitudesReasignacion();
 
 }
