@@ -2,6 +2,7 @@ package com.enactusumg.sdr.controllers;
 
 import com.enactusumg.sdr.dto.*;
 import com.enactusumg.sdr.projections.UserDetailProjection;
+import com.enactusumg.sdr.services.EmailService;
 import com.enactusumg.sdr.services.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -10,7 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Api
 @RestController
@@ -19,6 +23,9 @@ public class UserController {
 
     @Autowired
     public UserService userService;
+
+    @Autowired
+    public EmailService emailService;
 
     @PostMapping(value = "internal/users/token/refresh")
     @ApiOperation(value = "Retorna todos los usuarios registrados en el sistema.")
@@ -85,9 +92,34 @@ public class UserController {
         return userService.validateToken(username, token);
     }
 
-    @PatchMapping(value = "internal/users/change/password")
+    @PatchMapping(value = "external/users/change/password")
     @ApiOperation(value = "Actualiza la contraseña de un usuario en base de datos.")
     public boolean updatePassword(@RequestHeader HttpHeaders headers, @RequestBody ChangePassDto dto) {
         return userService.changePassword(headers, dto);
+    }
+
+    @PostMapping(value = "external/users/support")
+    @ApiOperation(value = "Actualiza la contraseña de un usuario en base de datos.")
+    public boolean support(@RequestBody SupportDto dto) {
+        final EmailBodyDto bodyDto = new EmailBodyDto();
+        bodyDto.setEmail("soporte@enactusumg.com");
+        bodyDto.setTemplateId("d-68ca7caef99a4a98b0bbb4c7bcd07420");
+
+        Map<String, String> params = new HashMap<>();
+        params.put("name", dto.getName());
+        params.put("email", dto.getEmail());
+        params.put("subject", dto.getSubject());
+        params.put("message", dto.getMessage());
+
+        try {
+            emailService.sendEmail(bodyDto, params);
+            bodyDto.setTemplateId("d-afee2707acf644d09fac9d2a746fca7e");
+            bodyDto.setEmail(dto.getEmail());
+            emailService.sendEmail(bodyDto, params);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

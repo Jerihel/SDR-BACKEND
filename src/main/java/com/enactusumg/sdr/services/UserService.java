@@ -222,7 +222,8 @@ public class UserService {
     public boolean requestChangePassword(String username) {
         final StringBuilder token = new StringBuilder();
         final EmailBodyDto bodyDto = new EmailBodyDto();
-        final User user = userRepository.findById(username).orElseThrow(
+
+        final User user = userRepository.findById(Arrays.stream(username.split("@")).findFirst().orElse(username)).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.")
         );
 
