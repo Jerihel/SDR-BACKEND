@@ -24,4 +24,7 @@ public class UserRequestDto {
     private  String experienceDetail;
     private Integer adviseOn;
     private Integer adviseWay;
+    private String supportLookUp;
+
+
 }

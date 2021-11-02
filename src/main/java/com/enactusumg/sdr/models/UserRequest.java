@@ -25,11 +25,13 @@ public class UserRequest implements Serializable {
     private String experienceDetail;
     private Integer adviseOn;
     private Integer adviseWay;
+    private String supportLookUp;
+
 
     public UserRequest() {
     }
 
-    public UserRequest(Integer idUserRequest, Integer campus, Integer facultad, Integer career, Integer enacterDegree, Integer interest, Integer lookUp, String financialSupport, Integer amount, String supportDetail, String adviserDegree, String currenctActivity, String hasExperience, String experienceDetail, Integer adviseOn, Integer adviseWay) {
+    public UserRequest(Integer idUserRequest, Integer campus, Integer facultad, Integer career, Integer enacterDegree, Integer interest, Integer lookUp, String financialSupport, Integer amount, String supportDetail, String adviserDegree, String currenctActivity, String hasExperience, String experienceDetail, Integer adviseOn, Integer adviseWay, String supportLookUp) {
         this.idUserRequest = idUserRequest;
         this.campus = campus;
         this.facultad = facultad;
@@ -46,6 +48,8 @@ public class UserRequest implements Serializable {
         this.experienceDetail = experienceDetail;
         this.adviseOn = adviseOn;
         this.adviseWay = adviseWay;
+        this.supportLookUp= supportLookUp;
+
     }
 
     public static UserRequest saveUserRequest(UserRequestDto dto, Integer idRequest) {
@@ -67,6 +71,7 @@ public class UserRequest implements Serializable {
         user.setExperienceDetail(dto.getExperienceDetail());
         user.setAdviseOn(dto.getAdviseOn());
         user.setAdviseWay(dto.getAdviseWay());
+        user.setSupportLookUp(dto.getSupportLookUp());
 
         return user;
     }
@@ -80,6 +85,15 @@ public class UserRequest implements Serializable {
 
     public void setIdUserRequest(Integer idUserRequest) {
         this.idUserRequest = idUserRequest;
+    }
+
+    @Column(name = "support_look_up", length = 100)
+    public String getSupportLookUp() {
+        return supportLookUp;
+    }
+
+    public void setSupportLookUp(String supportLookUp) {
+        this.supportLookUp = supportLookUp;
     }
 
     @Column(name = "campus")
