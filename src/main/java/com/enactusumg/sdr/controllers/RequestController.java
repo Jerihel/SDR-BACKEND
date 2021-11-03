@@ -2,6 +2,7 @@ package com.enactusumg.sdr.controllers;
 
 import com.enactusumg.sdr.dto.RequestEnacterDto;
 import com.enactusumg.sdr.dto.RequestEnacterQuery;
+import com.enactusumg.sdr.dto.RequestEntrepreneurDto;
 import com.enactusumg.sdr.models.Request;
 import com.enactusumg.sdr.projections.SolicitudesAsignables;
 import com.enactusumg.sdr.services.RequestService;

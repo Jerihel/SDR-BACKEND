@@ -3,6 +3,8 @@ package com.enactusumg.sdr.services;
 
 import com.enactusumg.sdr.dto.RequestEnacterDto;
 import com.enactusumg.sdr.dto.RequestEnacterQuery;
+import com.enactusumg.sdr.dto.RequestEntrepreneurDto;
+import com.enactusumg.sdr.models.EntrepreneurRequest;
 import com.enactusumg.sdr.models.Request;
 import com.enactusumg.sdr.models.UserRequest;
 import com.enactusumg.sdr.projections.SolicitudesAsignables;
@@ -112,35 +114,31 @@ public class RequestService {
 
 
     @Transactional
-    public Request saveRequestEntrepreneur(RequestEntrepreneurDto dto){
-logger.info("creando solicitud");
-Request request = Request.saveRequest(dto.getRequest());
+    public Request saveRequestEntrepreneur(RequestEntrepreneurDto dto) {
+        logger.info("creando solicitud");
+        Request request = Request.saveRequest(dto.getRequest());
 
-   Request request2=   requestRpstry.save(request);
+        Request request2 = requestRpstry.save(request);
 
-        EntrepreneurRequest subRequest= entrepreneurRequest.saveEntrepreneurRequest(dto.getEntrepreneurRequest(),request2.getIdRequest());
+        EntrepreneurRequest subRequest = EntrepreneurRequest.saveEntrepreneurRequest(dto.getEntrepreneurRequest(), request2.getIdRequest());
 
-if(subRequest==null){
-
-    throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Error al crear la solicitud");
-}
         return request2;
     }
 
     @Transactional(readOnly = true)
-    public  Request getRequestEnd(Integer id){
-      if(!requestRpstry.existsById(id)){
+    public Request getRequestEnd(Integer id) {
+        if (!requestRpstry.existsById(id)) {
 
-          throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Error. No existe la solicitud");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error. No existe la solicitud");
 
-      }
-Optional<Request> request = requestRpstry.findById(id);
-      if(!request.isPresent()){
+        }
+        Optional<Request> request = requestRpstry.findById(id);
+        if (!request.isPresent()) {
 
-          throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Error. No existe informacion para esta consulta");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error. No existe informacion para esta consulta");
 
-      }
+        }
 
-      return request.get();
+        return request.get();
     }
 }
