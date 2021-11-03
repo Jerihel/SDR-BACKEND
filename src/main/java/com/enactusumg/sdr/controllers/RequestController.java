@@ -65,7 +65,7 @@ public class RequestController {
 
     @PostMapping(value = "/external/save/requestEntrepreneur")
     @ApiOperation(value = "crea una nueva solicitud y guarda la informacion")
-    public Request saveRequest(@RequestBody RequestEntrepreneurDto dto) {
-        return requestSrv.saveRequestEntrepreneur(dto);
+    public void saveRequest(@RequestBody RequestEntrepreneurDto dto) {
+        requestSrv.saveRequestEntrepreneur(dto);
     }
 }

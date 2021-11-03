@@ -1,13 +1,12 @@
 package com.enactusumg.sdr.models;
 
 import com.enactusumg.sdr.dto.EntrepreneurRequestDto;
-import com.enactusumg.sdr.dto.RequestDto;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
-import java.util.Date;
-
-import static javax.persistence.GenerationType.IDENTITY;
 
 @Table(name = "entrepreneur_request", schema = "enactus_sreg")
 @Entity
@@ -29,7 +28,8 @@ public class EntrepreneurRequest implements Serializable {
         this.contextLocation = contextLocation;
         this.details = details;
     }
-    public static  EntrepreneurRequest saveEntrepreneurRequest(EntrepreneurRequestDto dto, Integer idRequest){
+
+    public static EntrepreneurRequest saveEntrepreneurRequest(EntrepreneurRequestDto dto, Integer idRequest) {
         EntrepreneurRequest entrepreneurRequest = new EntrepreneurRequest();
         entrepreneurRequest.setIdEntrepreneurRequest(1);
         entrepreneurRequest.setIdEntrepreneurRequest(idRequest);
@@ -38,7 +38,7 @@ public class EntrepreneurRequest implements Serializable {
         entrepreneurRequest.setContextLocation(dto.getContextLocation());
         entrepreneurRequest.setDetails(dto.getDetails());
 
-return entrepreneurRequest;
+        return entrepreneurRequest;
     }
 
     @Id
@@ -47,7 +47,7 @@ return entrepreneurRequest;
         return idEntrepreneurRequest;
     }
 
-    public void setIdEntrepreneurRequest (Integer idEntrepreneurRequest) {
+    public void setIdEntrepreneurRequest(Integer idEntrepreneurRequest) {
         this.idEntrepreneurRequest = idEntrepreneurRequest;
     }
 
@@ -83,7 +83,7 @@ return entrepreneurRequest;
     public String getDetails() {
         return details;
     }
-    
+
     public void setDetails(String details) {
         this.details = details;
     }

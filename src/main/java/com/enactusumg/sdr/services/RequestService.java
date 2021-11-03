@@ -1,6 +1,7 @@
 package com.enactusumg.sdr.services;
 
 
+import com.enactusumg.sdr.dto.EmailBodyDto;
 import com.enactusumg.sdr.dto.RequestEnacterDto;
 import com.enactusumg.sdr.dto.RequestEnacterQuery;
 import com.enactusumg.sdr.dto.RequestEntrepreneurDto;
@@ -17,7 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -27,6 +31,8 @@ public class RequestService {
     RequestRepository requestRpstry;
     @Autowired
     UserRequestService requestUsr;
+    @Autowired
+    EmailService emailService;
 
     Logger logger = LoggerFactory.getLogger(RequestService.class);
 
@@ -114,7 +120,7 @@ public class RequestService {
 
 
     @Transactional
-    public Request saveRequestEntrepreneur(RequestEntrepreneurDto dto) {
+    public void saveRequestEntrepreneur(RequestEntrepreneurDto dto) {
         logger.info("creando solicitud");
         Request request = Request.saveRequest(dto.getRequest());
 
@@ -122,7 +128,20 @@ public class RequestService {
 
         EntrepreneurRequest subRequest = EntrepreneurRequest.saveEntrepreneurRequest(dto.getEntrepreneurRequest(), request2.getIdRequest());
 
-        return request2;
+        final EmailBodyDto bodyDto = new EmailBodyDto();
+        bodyDto.setEmail(dto.getRequest().getEmail());
+        bodyDto.setTemplateId("d-789ea15a857049c7acb8decca6a77a4c");
+
+        Map<String, String> params = new HashMap<>();
+        params.put("name", request.getName());
+        params.put("phone", request.getTelephone());
+        params.put("email", request.getEmail());
+        params.put("detail", subRequest.getDetails());
+
+        try {
+            emailService.sendEmail(bodyDto, params);
+        } catch (IOException e) {
+        }
     }
 
     @Transactional(readOnly = true)
