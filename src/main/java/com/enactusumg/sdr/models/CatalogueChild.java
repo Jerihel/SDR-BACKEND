@@ -42,7 +42,7 @@ public class CatalogueChild implements Serializable {
     public void setIdCatalogue(int idCatalogue) {
         this.idCatalogue = idCatalogue;
     }
-@Column(name = "name",length = 75)
+@Column(name = "name",length = 100)
     public String getName() {
         return name;
     }
