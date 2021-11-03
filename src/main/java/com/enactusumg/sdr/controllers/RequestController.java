@@ -61,4 +61,10 @@ public class RequestController {
     public void reasignarSolicitudes(@RequestBody List<Integer> idSolicitudes) {
         requestSrv.reasignarSolicitudes(idSolicitudes);
     }
+
+    @PostMapping(value = "/external/save/requestEntrepreneur")
+    @ApiOperation(value = "crea una nueva solicitud y guarda la informacion")
+    public Request saveRequest(@RequestBody RequestEntrepreneurDto dto) {
+        return requestSrv.saveRequestEntrepreneur(dto);
+    }
 }

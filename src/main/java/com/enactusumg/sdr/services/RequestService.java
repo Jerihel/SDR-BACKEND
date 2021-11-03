@@ -109,4 +109,38 @@ public class RequestService {
             request.setState(9);
         });
     }
+
+
+    @Transactional
+    public Request saveRequestEntrepreneur(RequestEntrepreneurDto dto){
+logger.info("creando solicitud");
+Request request = Request.saveRequest(dto.getRequest());
+
+   Request request2=   requestRpstry.save(request);
+
+        EntrepreneurRequest subRequest= entrepreneurRequest.saveEntrepreneurRequest(dto.getEntrepreneurRequest(),request2.getIdRequest());
+
+if(subRequest==null){
+
+    throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Error al crear la solicitud");
+}
+        return request2;
+    }
+
+    @Transactional(readOnly = true)
+    public  Request getRequestEnd(Integer id){
+      if(!requestRpstry.existsById(id)){
+
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Error. No existe la solicitud");
+
+      }
+Optional<Request> request = requestRpstry.findById(id);
+      if(!request.isPresent()){
+
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Error. No existe informacion para esta consulta");
+
+      }
+
+      return request.get();
+    }
 }
