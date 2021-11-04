@@ -1,6 +1,6 @@
 package com.enactusumg.sdr.controllers;
 
-import com.enactusumg.sdr.projections.StateReviewerProjection;
+import com.enactusumg.sdr.models.Request;
 import com.enactusumg.sdr.services.ReviewersService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,18 +18,26 @@ public class ReviewersController {
 
     @Autowired
     public ReviewersService reviewersService;
+    
 
 
-    @GetMapping(value = "external/stateReviewer/{id}")
+    @GetMapping(value = "external/stateReviewer/{pUser}")
     @ApiOperation(value = "Retorna el estado del revisor.")
-    public List<StateReviewerProjection> getState(@PathVariable int id) {
-        return reviewersService.getStateReviewer(id);
+    public List<BigInteger> getState(@PathVariable String pUser) {
+        return reviewersService.getStateReviewer(pUser);
     }
 
-    @GetMapping(value = "external/countRequestReviewer/{user}")
+    @GetMapping(value = "external/countRequestReviewer/{pUser}")
     @ApiOperation(value = "Retorna solicitudes por revisor en estado analisis de la solicitud.")
-    public List<BigInteger> getCountRequestReviewer(@PathVariable String user) {
-        return reviewersService.getCountRequest(user);
+    public List<BigInteger> getCountRequestReviewer(@PathVariable String pUser) {
+        return reviewersService.getCountRequest(pUser);
+    }
+    
+     @GetMapping("external/obtenerRequest")
+    @ApiOperation(value="Obtiene listado de todas las solicitudes", notes="Retorna todas las solicitudes")
+    public List<Request> obtenerRequest() {
+        List<Request> obtenerRequest = reviewersService.obtenerRequest();
+        return obtenerRequest;
     }
 
 }

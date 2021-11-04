@@ -20,12 +20,12 @@ public interface ReviewersRepository extends CrudRepository<User, String> {
     List<User> findAll();
     
         
-    @Query(value = "select state as \"state\" from users where idUser=:pId",
+    @Query(value = "select state as state from enactus_sreg.users where id_user=:pUser",
             nativeQuery = true
     )
-    List<StateReviewerProjection> getState(@Param("pId") int pId);
+        List<BigInteger> getState(@Param("pUser") String pUser);
     
-    @Query(value = "select count(noCriterio) as \"cantidad\" from criterion_evaluation where usuarioAgrega=:pUser",
+    @Query(value = "select count(no_criterio) from enactus_sreg.criterion_evaluation where usuario_agrega=:pUser",
             nativeQuery = true
     )
     List<BigInteger> getCountRequest(@Param("pUser") String pUser);
